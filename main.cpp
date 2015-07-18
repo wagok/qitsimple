@@ -3,14 +3,6 @@
 #endif
 
 #include <iostream>
-#include <stdio.h>
-#include <string.h>
-#include <unistd.h>
-#include <errno.h>
-#include "config.h"
-#include "monitor.h"
-#include "NamedQueue.h"
-
 #include "DaemonProc.h"
 
 std::string echo(std::string* str);

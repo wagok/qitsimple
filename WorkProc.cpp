@@ -17,7 +17,6 @@
 
 #include "Utils.h"
 #include "SocketThreadManager.h"
-#include "work.h"
 
 int WorkProc::run() {
 
