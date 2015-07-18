@@ -18,6 +18,7 @@ public:
     }
     void NewThread();
     int startListenServerSocket();
+    void CloseServerSocket();
 private:
 
     int _server_fd;

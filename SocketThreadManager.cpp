@@ -56,6 +56,10 @@ int SocketThreadManager::startListenServerSocket() {
     return _server_fd;
 }
 
+void SocketThreadManager::CloseServerSocket() {
+    close(_server_fd);
+}
+
 void SocketThreadManager::NewThread() {
     std::thread th(&SocketThreadManager::_workTread, this);
     th.detach();

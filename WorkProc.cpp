@@ -158,5 +158,6 @@ void WorkProc::_destroyWorkThread() {
     if (_queue != nullptr) {
         delete _queue;
     }
+    SocketThreadManager::getInstance().CloseServerSocket();
 }
 

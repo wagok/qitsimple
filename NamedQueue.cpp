@@ -28,7 +28,12 @@ std::string *NamedQueue::pop(std::string name) {
     if(search != queue_map.end()) {
         SimpleQueue *tmp = search->second;
         _lock.unlock();
-        return tmp->pop();
+        std::string * data =  tmp->pop();
+        if (tmp->length() == 0) {
+            queue_map.erase(search);
+            delete tmp;
+        }
+        return data;
     }
     _lock.unlock();
     return NULL;
