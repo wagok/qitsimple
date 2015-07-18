@@ -5,7 +5,7 @@
 #ifndef LINUX_DEAMON_WORKPROC_H
 #define LINUX_DEAMON_WORKPROC_H
 
-
+#include <signal.h>
 #include "NamedQueue.h"
 
 class WorkProc

@@ -20,14 +20,14 @@ class CmdController
 {
 
 public:
-    CmdController(char *buf, ssize_t buflen);
+    CmdController(char buf[], ssize_t buflen);
     int Execute();
-    std::string getResult() {return _result};
+    std::string getResult() {return _result;}
 
 private:
     std::string _getQueueName();
     std::string _queueName;
-    char _buf[];
+    char *_buf;
     ssize_t _buflen;
     char _cmd;
 

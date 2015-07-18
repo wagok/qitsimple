@@ -20,7 +20,7 @@ public:
     int startListenServerSocket();
 private:
 
-    static int _server_fd;
+    int _server_fd;
     void _workTread();
     int _server_establish_connection();
     void _tcp_server_read(int rfd);

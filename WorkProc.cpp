@@ -8,8 +8,6 @@
 #include <execinfo.h>
 #include <thread>
 
-#include <netdb.h>
-
 #include "WorkProc.h"
 #include "Options.h"
 #include "Logger.h"

@@ -57,7 +57,7 @@ int SocketThreadManager::startListenServerSocket() {
 }
 
 void SocketThreadManager::NewThread() {
-    std::thread th(_workTread);
+    std::thread th(&SocketThreadManager::_workTread, this);
     th.detach();
 }
 
@@ -70,7 +70,7 @@ void SocketThreadManager::_workTread() {
 #pragma clang diagnostic ignored "-Wmissing-noreturn"
     for (;;) {
         rfd = _server_establish_connection();
-        std::thread th(_tcp_server_read, rfd);
+        std::thread th(&SocketThreadManager::_tcp_server_read, this, rfd);
         th.detach();
     }
 #pragma clang diagnostic pop

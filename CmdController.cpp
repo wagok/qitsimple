@@ -5,7 +5,7 @@
 #include "CmdController.h"
 #include "WorkProc.h"
 
-CmdController::CmdController(char *buf, ssize_t buflen) {
+CmdController::CmdController(char buf[], ssize_t buflen) {
 
     _buf = buf;
     _buflen = buflen;
@@ -18,12 +18,12 @@ int CmdController::Execute() {
     int return_code = CMD_SUCCESS;
     try {
         switch (_cmd) {
-            case CMD_PUT:
+            case CMD_PUT: {
                 WorkProc::getInstance().getQueue()->push(_getQueueName(), _getPriority(), _getData());
                 _result = std::string("ok\n");
                 break;
-
-            case CMD_GET:
+            }
+            case CMD_GET: {
                 std::string *data = WorkProc::getInstance().getQueue()->pop(_getQueueName());
                 if (data != NULL) {
                     _result = std::string(*data);
@@ -32,18 +32,20 @@ int CmdController::Execute() {
                     _result = std::string("::no tasks::\n");
                 }
                 break;
-
-            case CMD_LENGTH:
+            }
+            case CMD_LENGTH: {
                 _result = std::to_string(WorkProc::getInstance().getQueue()->length(_getQueueName()));
-                break;
 
+                break;
+            }
             case CMD_STATUS:
                 break;
 
-            default:
+            default: {
                 _result = std::string("Unknown command\n");
                 return_code = CMD_ERROR;
                 break;
+            }
         }
     } catch (const std::exception &ex) {
         _result = std::string(ex.what());
