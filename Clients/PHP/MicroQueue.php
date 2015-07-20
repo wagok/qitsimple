@@ -29,6 +29,9 @@ class MicroQueue
         if (strlen($name) > 255) {
             $name = substr($name, 0, 255);
         }
+        if ($priority < 1) {
+            $priority = 1;
+        }
         if ($priority > 256 * 256) {
             $priority = 256*256;
         }
