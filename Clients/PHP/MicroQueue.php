@@ -6,6 +6,9 @@
  * Date: 7/16/15
  * Time: 9:50 PM
  */
+
+define ('MAX_DATA_SIZE', 524288); // 512K
+
 class MicroQueue
 {
     public $socket;
@@ -55,7 +58,7 @@ class MicroQueue
         $out = "";
         $result = "";
         while (true) {
-            $bytes = socket_recv($this->socket, $out, 2048, MSG_DONTWAIT);
+            $bytes = socket_recv($this->socket, $out, MAX_DATA_SIZE, MSG_DONTWAIT);
             if ($bytes === false) {
                 $err = socket_strerror(socket_last_error($this->socket));
             }
@@ -96,7 +99,7 @@ class MicroQueue
         $out = "";
         $result = "";
         while (true) {
-            $bytes = socket_recv($this->socket, $out, 2048, MSG_DONTWAIT);
+            $bytes = socket_recv($this->socket, $out, MAX_DATA_SIZE, MSG_DONTWAIT);
             if ($bytes === false) {
                 $err = socket_strerror(socket_last_error($this->socket));
             }
@@ -130,7 +133,7 @@ class MicroQueue
         $str = 'g' . chr(strlen($name)) . $name;
         socket_write($this->socket, $str, strlen($str));
         while (true) {
-            $bytes = socket_recv($this->socket, $out, 2048, MSG_DONTWAIT);
+            $bytes = socket_recv($this->socket, $out, MAX_DATA_SIZE, MSG_DONTWAIT);
 
             if (!empty($out)) {
                 $result .= $out;
@@ -152,7 +155,7 @@ class MicroQueue
         $str = 'q  ';
         socket_write($this->socket, $str, strlen($str));
         while (true) {
-            $bytes = socket_recv($this->socket, $out, 2048, MSG_DONTWAIT);
+            $bytes = socket_recv($this->socket, $out, MAX_DATA_SIZE, MSG_DONTWAIT);
             if (!empty($out)) {
                 $result .= $out;
             }
@@ -180,7 +183,7 @@ class MicroQueue
         $str = 'l' . chr(strlen($name)) . $name;
         socket_write($this->socket, $str, strlen($str));
         while (true) {
-            $bytes = socket_recv($this->socket, $out, 2048, MSG_DONTWAIT);
+            $bytes = socket_recv($this->socket, $out, MAX_DATA_SIZE, MSG_DONTWAIT);
             if (!empty($out)) {
                 $result .= $out;
             }
