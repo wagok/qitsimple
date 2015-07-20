@@ -20,13 +20,3 @@ int main(int argc, char** argv)
 
 
 }
-/*
-std::string echo(std::string* str) {
-    if (str != NULL) {
-        return *str;
-    } else {
-        return std::string("NULL");
-    }
-}
- */
- 
