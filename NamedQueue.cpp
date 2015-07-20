@@ -68,3 +68,12 @@ unsigned long NamedQueue::length(std::string name) {
     _lock.unlock();
     return 0;
 }
+
+std::string NamedQueue::getQueueList() {
+    std::string result("");
+    for(auto elem : queue_map) {
+        result.append(elem.first);
+        result.append("\n");
+    }
+    return result;
+}

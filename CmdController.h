@@ -13,6 +13,7 @@
 #define CMD_LENGTH 'l'
 #define CMD_STATUS 's'
 #define CMD_POSTPONED 't'
+#define CMD_LIST 'q'
 
 
 #define CMD_SUCCESS 0

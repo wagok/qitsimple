@@ -46,7 +46,8 @@ int CmdController::Execute() {
 
                 break;
             }
-            case CMD_STATUS:
+            case CMD_LIST:
+                _result = WorkProc::getInstance().getQueue()->getQueueList();
                 break;
 
             default: {

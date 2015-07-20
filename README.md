@@ -49,6 +49,19 @@ while(true) {
 }
 $client->disconnect();
 ```
+Get status:
+```php
+require_once 'MicroQueue.php';
+
+$obj = new MicroQueue();
+$obj->connect("localhost", 5555);
+$list = $obj->getQuequeList();
+foreach ($list as $queue) {
+    echo "Queue:" . $queue . " " . $obj->length($queue) . "\n";
+}
+$obj->disconnect();
+```
+
 How to compile:
 
 Download project to some directory.

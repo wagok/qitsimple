@@ -19,6 +19,7 @@ public:
     void push_postponed(std::string, int delay, std::string* data);
     std::string *pop(std::string);
     unsigned long length(std::string);
+    std::string getQueueList();
 };
 
 
