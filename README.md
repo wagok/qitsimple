@@ -49,3 +49,17 @@ while(true) {
 }
 $client->disconnect();
 ```
+How to compile:
+
+Download project to some directory.
+In directory:
+```bash
+cmake -DCMAKE_BUILD_TYPE=RELEASE
+make
+```
+Now run daemon from root:
+
+```
+sudo quitsimple
+```
+
