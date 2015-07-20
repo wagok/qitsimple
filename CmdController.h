@@ -12,9 +12,11 @@
 #define CMD_GET 'g'
 #define CMD_LENGTH 'l'
 #define CMD_STATUS 's'
+#define CMD_POSTPONED 't'
+
 
 #define CMD_SUCCESS 0
-#define CMD_ERROR 0
+#define CMD_ERROR 10
 
 class CmdController
 {
@@ -32,6 +34,7 @@ private:
     char _cmd;
 
     int _getPriority();
+    int _getTime();
     std::string _result;
     std::string *_getData();
     std::string *_data;

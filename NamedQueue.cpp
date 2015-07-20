@@ -21,6 +21,23 @@ void NamedQueue::push(std::string name, int priority, std::string *data) {
     _lock.unlock();
 }
 
+void NamedQueue::push_postponed(std::string name, int delay, std::string* data) {
+    _lock.lock();
+    auto search = queue_map.find(name);
+    if(search != queue_map.end()) {
+        SimpleQueue *tmp = search->second;
+        _lock.unlock();
+        tmp->push_postponed(delay, data);
+    }
+    else {
+        auto queue = new SimpleQueue();
+        queue->push_postponed(delay, data);
+        queue_map[name] = queue;
+    }
+    _lock.unlock();
+
+}
+
 std::string *NamedQueue::pop(std::string name) {
 
     _lock.lock();

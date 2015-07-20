@@ -3,6 +3,7 @@
 //
 
 #include "SimpleQueue.h"
+#include "Logger.h"
 
 std::string* SimpleQueue::pop() {
 
@@ -12,16 +13,20 @@ std::string* SimpleQueue::pop() {
        str = NULL;
     } else {
         auto elem = queue.top();
-        str = elem->data;
-        queue.pop();
-        delete elem;
+        if (elem->priority == 0 && elem->timestamp >= std::time(nullptr)) {
+            str = NULL;
+        } else {
+            str = elem->data;
+            queue.pop();
+            delete elem;
+        }
     }
     _lock.unlock();
     return str;
 }
 
 void SimpleQueue::push(int priority, std::string* data) {
-    QueueElem *elem = new QueueElem(priority, data);
+    QueueElem *elem = new QueueElem(priority, 0, data);
     _lock.lock();
     queue.push(elem);
     _lock.unlock();
@@ -32,4 +37,12 @@ unsigned long SimpleQueue::length() {
     unsigned long size = queue.size();
     _lock.unlock();
     return size;
+}
+
+void SimpleQueue::push_postponed(int timestamp, std::string *data) {
+    timestamp += std::time(nullptr);
+    QueueElem *elem = new QueueElem(0, timestamp, data);
+    _lock.lock();
+    queue.push(elem);
+    _lock.unlock();
 }

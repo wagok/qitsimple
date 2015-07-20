@@ -4,6 +4,7 @@
 
 #include "CmdController.h"
 #include "WorkProc.h"
+#include "Logger.h"
 
 CmdController::CmdController(char buf[], ssize_t buflen) {
 
@@ -33,6 +34,13 @@ int CmdController::Execute() {
                 }
                 break;
             }
+
+            case CMD_POSTPONED: {
+                WorkProc::getInstance().getQueue()->push_postponed(_getQueueName(), _getTime(), _getData());
+                _result = std::string("ok\n");
+                break;
+            }
+
             case CMD_LENGTH: {
                 _result = std::to_string(WorkProc::getInstance().getQueue()->length(_getQueueName()));
 
@@ -62,9 +70,18 @@ std::string CmdController::_getQueueName() {
 
 
 int CmdController::_getPriority() {
-    return _buf[_buf[1] + 2];
+    //return _buf[_buf[1] + 2];
+    return _getTime();
+}
+
+int CmdController::_getTime() {
+    int time;
+    time = _buf[_buf[1] + 2];
+    time <<= 8;
+    time += _buf[_buf[1] + 3];
+    return time;
 }
 
 std::string *CmdController::_getData() {
-    return _data = new std::string(_buf, _buf[1] + 3, _buflen - _buf[1] - 3);
+    return _data = new std::string(_buf + _buf[1] + 4, _buflen - _buf[1] - 4);
 }

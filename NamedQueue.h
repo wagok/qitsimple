@@ -16,6 +16,7 @@ private:
 public:
     std::unordered_map<std::string, SimpleQueue*> queue_map;
     void push(std::string, int priority, std::string* data);
+    void push_postponed(std::string, int delay, std::string* data);
     std::string *pop(std::string);
     unsigned long length(std::string);
 };
