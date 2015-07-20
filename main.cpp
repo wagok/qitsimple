@@ -5,8 +5,6 @@
 #include <iostream>
 #include "DaemonProc.h"
 
-std::string echo(std::string* str);
-
 int main(int argc, char** argv)
 {
 
