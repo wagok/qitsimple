@@ -9,6 +9,7 @@ Qitsimple implements posponed mesages when you can set the time period in second
 How to use:
 
 Client:
+```php
 <?php
 require_once 'MicroQueue.php';
 $client = new MicroQueue();
@@ -30,8 +31,9 @@ $client->put_postponed("queue_two", 60, "queue two - 60 seconds later");
 $client->put_postponed("queue_two", 5, "queue two - 5 seconds later");
 
 $client->disconnect();
-
+```
 Worker:
+```php
 <?php
 require_once 'MicroQueue.php';
 $worker = new MicroQueue();
@@ -46,4 +48,4 @@ while(true) {
     usleep(50000);
 }
 $client->disconnect();
-
+```
