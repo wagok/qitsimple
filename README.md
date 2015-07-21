@@ -73,6 +73,6 @@ make
 Now run daemon from root:
 
 ```
-sudo qitsimple
+sudo qitsimple ./config.cfg
 ```
 
