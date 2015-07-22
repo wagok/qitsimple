@@ -13,15 +13,18 @@ define ("END_OF_STREAM", chr(0));
 class MicroQueue
 {
     public $socket;
+    protected $timeout;
 
     /**
      * Connect to server
      * @param $host Hostname
      * @param $port Port
+     * @param $timeout Timeout in ms
      * @return bool
      */
-    public function connect($host, $port)
+    public function connect($host, $port, $timeout = 100)
     {
+        $this->timeout = $timeout;
         $service_port = $port;
         $address = gethostbyname($host);
         $this->socket = socket_create(AF_INET, SOCK_STREAM, SOL_TCP);
@@ -58,7 +61,8 @@ class MicroQueue
         $res = socket_write($this->socket, $str, strlen($str));
         $out = "";
         $result = "";
-        while (true) {
+        $endtime = microtime(true)+$this->timeout/1000;
+        while ($endtime > microtime(true)) {
             $bytes = socket_recv($this->socket, $out, MAX_DATA_SIZE, MSG_DONTWAIT);
             /*if ($bytes === false) {
                 $err = socket_strerror(socket_last_error($this->socket));
@@ -100,7 +104,8 @@ class MicroQueue
         $res = socket_write($this->socket, $str, strlen($str));
         $out = "";
         $result = "";
-        while (true) {
+        $endtime = microtime(true)+$this->timeout/1000;
+        while ($endtime > microtime(true)) {
             $bytes = socket_recv($this->socket, $out, MAX_DATA_SIZE, MSG_DONTWAIT);
             /*if ($bytes === false) {
                 $err = socket_strerror(socket_last_error($this->socket));
@@ -134,7 +139,8 @@ class MicroQueue
         $out = "";
         $str = 'g' . chr(strlen($name)) . $name . END_OF_STREAM;
         socket_write($this->socket, $str, strlen($str));
-        while (true) {
+        $endtime = microtime(true)+$this->timeout/1000;
+        while ($endtime > microtime(true)) {
             $bytes = socket_recv($this->socket, $out, MAX_DATA_SIZE, MSG_DONTWAIT);
 
             if (!empty($out)) {
@@ -156,7 +162,8 @@ class MicroQueue
         $out = "";
         $str = 'q  ' . END_OF_STREAM;
         socket_write($this->socket, $str, strlen($str));
-        while (true) {
+        $endtime = microtime(true)+$this->timeout/1000;
+        while ($endtime > microtime(true)) {
             $bytes = socket_recv($this->socket, $out, MAX_DATA_SIZE, MSG_DONTWAIT);
             if (!empty($out)) {
                 $result .= $out;
@@ -184,7 +191,8 @@ class MicroQueue
         $out = "";
         $str = 'l' . chr(strlen($name)) . $name . END_OF_STREAM;
         socket_write($this->socket, $str, strlen($str));
-        while (true) {
+        $endtime = microtime(true)+$this->timeout/1000;
+        while ($endtime > microtime(true)) {
             $bytes = socket_recv($this->socket, $out, MAX_DATA_SIZE, MSG_DONTWAIT);
             if (!empty($out)) {
                 $result .= $out;
