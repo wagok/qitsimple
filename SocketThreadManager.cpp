@@ -131,13 +131,20 @@ void SocketThreadManager::_tcp_server_read(int rfd)
                 bytes = recv(rfd, buf + buflen, sizeof(buf) - buflen - 1, 0);
                 if (bytes == 0) break;
                 if (bytes < 0) {
+                    // error
                     close(rfd);
                     return;
                 }
                 buflen += bytes;
                 if (buf[buflen-1] == END_OF_STREAM) {
+                    // correct end of stream
                     break;
                 }
+                if (buflen >= sizeof(buf)-1) {
+                    // length of stream is too large (overfull)
+                    return;
+                }
+
 
             }
             Logger::getInstance().WriteLog(buf);
