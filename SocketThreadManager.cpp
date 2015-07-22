@@ -17,6 +17,8 @@
 #include "WorkProc.h"
 #include "CmdController.h"
 
+#define END_OF_STREAM 0
+
 int SocketThreadManager::startListenServerSocket() {
     struct addrinfo hostinfo, *res;
 
@@ -120,11 +122,25 @@ void SocketThreadManager::_tcp_server_read(int rfd)
 {
 
     char buf[MAX_DATA_SIZE];
-    int buflen;
     for (;;) {
+        ssize_t buflen=0;
+        ssize_t bytes;
         try {
-            //read incomming message.
-            buflen = recv(rfd, buf, sizeof(buf)-1, 0);
+            for(;;) {
+                //read incomming message.
+                bytes = recv(rfd, buf + buflen, sizeof(buf) - buflen - 1, 0);
+                if (bytes == 0) break;
+                if (bytes < 0) {
+                    close(rfd);
+                    return;
+                }
+                buflen += bytes;
+                if (buf[buflen-1] == END_OF_STREAM) {
+                    break;
+                }
+
+            }
+            Logger::getInstance().WriteLog(buf);
             if (buflen <= 2) {
                 close(rfd);
                 //exit and close thread
@@ -142,4 +158,5 @@ void SocketThreadManager::_tcp_server_read(int rfd)
             Logger::getInstance().WriteLog(ex.what());
         }
     }
+    close(rfd);
 }

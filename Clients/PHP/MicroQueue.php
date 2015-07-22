@@ -8,6 +8,7 @@
  */
 
 define ('MAX_DATA_SIZE', 524288); // 512K
+define ("END_OF_STREAM", chr(0));
 
 class MicroQueue
 {
@@ -53,7 +54,7 @@ class MicroQueue
         }
         $priority_high = $priority >> 8;
         $priority_low = $priority % 256;
-        $str = 'p' . chr(strlen($name)) . $name . chr($priority_high) . chr($priority_low) . $str;
+        $str = 'p' . chr(strlen($name)) . $name . chr($priority_high) . chr($priority_low) . $str . END_OF_STREAM;
         $res = socket_write($this->socket, $str, strlen($str));
         $out = "";
         $result = "";
@@ -65,11 +66,11 @@ class MicroQueue
             if (!empty($out)) {
                 $result .= $out;
             }
-            if (substr($out, -1) === chr(0)) {
+            if (substr($out, -1) === END_OF_STREAM) {
                 break;
             }
         }
-        $result = str_replace(chr(0), "", $result);
+        $result = str_replace(END_OF_STREAM, "", $result);
         if ($result === "ok\n") {
             return true;
         } else {
@@ -94,7 +95,7 @@ class MicroQueue
         }
         $time_high = $time >> 8;
         $time_low = $time % 256;
-        $str = 't' . chr(strlen($name)) . $name . chr($time_high) . chr($time_low) . $str;
+        $str = 't' . chr(strlen($name)) . $name . chr($time_high) . chr($time_low) . $str . END_OF_STREAM;
         $res = socket_write($this->socket, $str, strlen($str));
         $out = "";
         $result = "";
@@ -106,11 +107,11 @@ class MicroQueue
             if (!empty($out)) {
                 $result .= $out;
             }
-            if (substr($out, -1) === chr(0)) {
+            if (substr($out, -1) === END_OF_STREAM) {
                 break;
             }
         }
-        $result = str_replace(chr(0), "", $result);
+        $result = str_replace(END_OF_STREAM, "", $result);
         if ($result === "ok\n") {
             return true;
         } else {
@@ -130,7 +131,7 @@ class MicroQueue
         }
         $result = "";
         $out = "";
-        $str = 'g' . chr(strlen($name)) . $name;
+        $str = 'g' . chr(strlen($name)) . $name . END_OF_STREAM;
         socket_write($this->socket, $str, strlen($str));
         while (true) {
             $bytes = socket_recv($this->socket, $out, MAX_DATA_SIZE, MSG_DONTWAIT);
@@ -138,11 +139,11 @@ class MicroQueue
             if (!empty($out)) {
                 $result .= $out;
             }
-            if (substr($out, -1) === chr(0)) {
+            if (substr($out, -1) === END_OF_STREAM) {
                 break;
             }
         }
-        return str_replace(chr(0), "", $result);
+        return str_replace(END_OF_STREAM, "", $result);
     }
 
     /**
@@ -152,18 +153,18 @@ class MicroQueue
     {
         $result = "";
         $out = "";
-        $str = 'q  ';
+        $str = 'q  ' . END_OF_STREAM;
         socket_write($this->socket, $str, strlen($str));
         while (true) {
             $bytes = socket_recv($this->socket, $out, MAX_DATA_SIZE, MSG_DONTWAIT);
             if (!empty($out)) {
                 $result .= $out;
             }
-            if (substr($out, -1) === chr(0)) {
+            if (substr($out, -1) === END_OF_STREAM) {
                 break;
             }
         }
-        $result = trim(str_replace(chr(0), "", $result));
+        $result = trim(str_replace(END_OF_STREAM, "", $result));
         if (empty($result)) {
             return array();
         }
@@ -180,18 +181,18 @@ class MicroQueue
     {
         $result = "";
         $out = "";
-        $str = 'l' . chr(strlen($name)) . $name;
+        $str = 'l' . chr(strlen($name)) . $name . END_OF_STREAM;
         socket_write($this->socket, $str, strlen($str));
         while (true) {
             $bytes = socket_recv($this->socket, $out, MAX_DATA_SIZE, MSG_DONTWAIT);
             if (!empty($out)) {
                 $result .= $out;
             }
-            if (substr($out, -1) === chr(0)) {
+            if (substr($out, -1) === END_OF_STREAM) {
                 break;
             }
         }
-        return str_replace(chr(0), "", $result);
+        return str_replace(END_OF_STREAM, "", $result);
     }
 
     /**
