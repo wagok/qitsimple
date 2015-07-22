@@ -60,9 +60,10 @@ class MicroQueue
         $result = "";
         while (true) {
             $bytes = socket_recv($this->socket, $out, MAX_DATA_SIZE, MSG_DONTWAIT);
-            if ($bytes === false) {
+            /*if ($bytes === false) {
                 $err = socket_strerror(socket_last_error($this->socket));
-            }
+                return false;
+            }*/
             if (!empty($out)) {
                 $result .= $out;
             }
@@ -74,7 +75,7 @@ class MicroQueue
         if ($result === "ok\n") {
             return true;
         } else {
-            false;
+            return false;
         }
     }
 
@@ -101,9 +102,9 @@ class MicroQueue
         $result = "";
         while (true) {
             $bytes = socket_recv($this->socket, $out, MAX_DATA_SIZE, MSG_DONTWAIT);
-            if ($bytes === false) {
+            /*if ($bytes === false) {
                 $err = socket_strerror(socket_last_error($this->socket));
-            }
+            } */
             if (!empty($out)) {
                 $result .= $out;
             }

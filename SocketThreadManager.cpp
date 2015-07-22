@@ -142,6 +142,7 @@ void SocketThreadManager::_tcp_server_read(int rfd)
                 }
                 if (buflen >= sizeof(buf)-1) {
                     // length of stream is too large (overfull)
+                    close(rfd);
                     return;
                 }
 
