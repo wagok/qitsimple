@@ -50,6 +50,11 @@ int CmdController::Execute() {
                 _result = WorkProc::getInstance().getQueue()->getQueueList();
                 break;
 
+            case CMD_CLEAR:
+                WorkProc::getInstance().getQueue()->clear(_getQueueName());
+                _result = std::string("ok\n");
+                break;
+
             default: {
                 _result = std::string("Unknown command\n");
                 return_code = CMD_ERROR;

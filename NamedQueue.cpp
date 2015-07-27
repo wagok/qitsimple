@@ -77,3 +77,19 @@ std::string NamedQueue::getQueueList() {
     }
     return result;
 }
+
+void NamedQueue::clear(std::string name) {
+    _lock.lock();
+    auto search = queue_map.find(name);
+    if(search != queue_map.end()) {
+        SimpleQueue *tmp = search->second;
+        _lock.unlock();
+        tmp->clear();
+        _lock.lock();
+        if (tmp->length() == 0) {
+            queue_map.erase(search);
+            delete tmp;
+        }
+    }
+    _lock.unlock();
+}

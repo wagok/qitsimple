@@ -14,6 +14,8 @@
 #define CMD_STATUS 's'
 #define CMD_POSTPONED 't'
 #define CMD_LIST 'q'
+#define CMD_CLEAR 'e'
+#define CMD_CLEAR_ALL 'a'
 
 
 #define CMD_SUCCESS 0

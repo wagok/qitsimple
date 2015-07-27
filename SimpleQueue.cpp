@@ -39,6 +39,17 @@ unsigned long SimpleQueue::length() {
     return size;
 }
 
+void SimpleQueue::clear() {
+    _lock.lock();
+    while(!queue.empty()) {
+        auto elem = queue.top();
+        delete(elem->data);
+        queue.pop();
+        delete elem;
+    }
+    _lock.unlock();
+}
+
 void SimpleQueue::push_postponed(int timestamp, std::string *data) {
     timestamp += std::time(nullptr);
     QueueElem *elem = new QueueElem(0, timestamp, data);

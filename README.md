@@ -58,6 +58,7 @@ $obj->connect("localhost", 5555);
 $list = $obj->getQuequeList();
 foreach ($list as $queue) {
     echo "Queue:" . $queue . " " . $obj->length($queue) . "\n";
+    $obj->clean($queue);
 }
 $obj->disconnect();
 ```

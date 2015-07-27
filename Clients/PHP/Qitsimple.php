@@ -10,7 +10,7 @@
 define ('MAX_DATA_SIZE', 524288); // 512K
 define ("END_OF_STREAM", chr(0));
 
-class MicroQueue
+class Qitsimple
 {
     public $socket;
     protected $timeout;
@@ -27,11 +27,11 @@ class MicroQueue
         $this->timeout = $timeout;
         $service_port = $port;
         $address = gethostbyname($host);
-        $this->socket = socket_create(AF_INET, SOCK_STREAM, SOL_TCP);
+        $this->socket = @socket_create(AF_INET, SOCK_STREAM, SOL_TCP);
         if ($this->socket === false) {
             return false;
         } else
-            $result = socket_connect($this->socket, $address, $service_port);
+            $result = @socket_connect($this->socket, $address, $service_port);
         if ($result === false) {
             return false;
         }
@@ -58,12 +58,12 @@ class MicroQueue
         $priority_high = $priority >> 8;
         $priority_low = $priority % 256;
         $str = 'p' . chr(strlen($name)) . $name . chr($priority_high) . chr($priority_low) . $str . END_OF_STREAM;
-        $res = socket_write($this->socket, $str, strlen($str));
+        $res = @socket_write($this->socket, $str, strlen($str));
         $out = "";
         $result = "";
         $endtime = microtime(true)+$this->timeout/1000;
         while ($endtime > microtime(true)) {
-            $bytes = socket_recv($this->socket, $out, MAX_DATA_SIZE, MSG_DONTWAIT);
+            $bytes = @socket_recv($this->socket, $out, MAX_DATA_SIZE, MSG_DONTWAIT);
             /*if ($bytes === false) {
                 $err = socket_strerror(socket_last_error($this->socket));
                 return false;
@@ -84,6 +84,37 @@ class MicroQueue
     }
 
     /**
+     * Clean queue
+     * @param $name queue name
+     * @return bool
+     */
+    public function clean($name)
+    {
+        if (strlen($name) > 255) {
+            $name = substr($name, 0, 255);
+        }
+        $str = 'e' . chr(strlen($name)) . $name . END_OF_STREAM;
+        $res = @socket_write($this->socket, $str, strlen($str));
+        $out = "";
+        $result = "";
+        $endtime = microtime(true)+$this->timeout/1000;
+        while ($endtime > microtime(true)) {
+            $bytes = @socket_recv($this->socket, $out, MAX_DATA_SIZE, MSG_DONTWAIT);
+            if (!empty($out)) {
+                $result .= $out;
+            }
+            if (substr($out, -1) === END_OF_STREAM) {
+                break;
+            }
+        }
+        $result = str_replace(END_OF_STREAM, "", $result);
+        if ($result === "ok\n") {
+            return true;
+        } else {
+            return false;
+        }
+    }
+    /**
      * Put postponed message to queue
      * @param $name Queue name
      * @param $time Time (delay) im seconds
@@ -101,12 +132,12 @@ class MicroQueue
         $time_high = $time >> 8;
         $time_low = $time % 256;
         $str = 't' . chr(strlen($name)) . $name . chr($time_high) . chr($time_low) . $str . END_OF_STREAM;
-        $res = socket_write($this->socket, $str, strlen($str));
+        $res = @socket_write($this->socket, $str, strlen($str));
         $out = "";
         $result = "";
         $endtime = microtime(true)+$this->timeout/1000;
         while ($endtime > microtime(true)) {
-            $bytes = socket_recv($this->socket, $out, MAX_DATA_SIZE, MSG_DONTWAIT);
+            $bytes = @socket_recv($this->socket, $out, MAX_DATA_SIZE, MSG_DONTWAIT);
             /*if ($bytes === false) {
                 $err = socket_strerror(socket_last_error($this->socket));
             } */
@@ -138,10 +169,10 @@ class MicroQueue
         $result = "";
         $out = "";
         $str = 'g' . chr(strlen($name)) . $name . END_OF_STREAM;
-        socket_write($this->socket, $str, strlen($str));
+        @socket_write($this->socket, $str, strlen($str));
         $endtime = microtime(true)+$this->timeout/1000;
         while ($endtime > microtime(true)) {
-            $bytes = socket_recv($this->socket, $out, MAX_DATA_SIZE, MSG_DONTWAIT);
+            $bytes = @socket_recv($this->socket, $out, MAX_DATA_SIZE, MSG_DONTWAIT);
 
             if (!empty($out)) {
                 $result .= $out;
@@ -161,10 +192,10 @@ class MicroQueue
         $result = "";
         $out = "";
         $str = 'q  ' . END_OF_STREAM;
-        socket_write($this->socket, $str, strlen($str));
+        @socket_write($this->socket, $str, strlen($str));
         $endtime = microtime(true)+$this->timeout/1000;
         while ($endtime > microtime(true)) {
-            $bytes = socket_recv($this->socket, $out, MAX_DATA_SIZE, MSG_DONTWAIT);
+            $bytes = @socket_recv($this->socket, $out, MAX_DATA_SIZE, MSG_DONTWAIT);
             if (!empty($out)) {
                 $result .= $out;
             }
@@ -176,7 +207,7 @@ class MicroQueue
         if (empty($result)) {
             return array();
         }
-            return explode("\n", $result);
+        return explode("\n", $result);
 
     }
 
@@ -190,10 +221,10 @@ class MicroQueue
         $result = "";
         $out = "";
         $str = 'l' . chr(strlen($name)) . $name . END_OF_STREAM;
-        socket_write($this->socket, $str, strlen($str));
+        @socket_write($this->socket, $str, strlen($str));
         $endtime = microtime(true)+$this->timeout/1000;
         while ($endtime > microtime(true)) {
-            $bytes = socket_recv($this->socket, $out, MAX_DATA_SIZE, MSG_DONTWAIT);
+            $bytes = @socket_recv($this->socket, $out, MAX_DATA_SIZE, MSG_DONTWAIT);
             if (!empty($out)) {
                 $result .= $out;
             }

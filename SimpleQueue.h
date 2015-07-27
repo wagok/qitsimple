@@ -42,6 +42,7 @@ public:
     void push_postponed(int timestamp, std::string *data);
     std::string *pop();
     unsigned long length();
+    void clear();
 };
 
 
