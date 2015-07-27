@@ -77,3 +77,8 @@ Now run daemon from root:
 sudo qitsimple ./config.cfg
 ```
 
+Or install it as service and add to autostart at boot:
+```
+sudo ./install.sh
+```
+
