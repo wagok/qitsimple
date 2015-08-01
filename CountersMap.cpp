@@ -32,7 +32,7 @@ void CountersMap::dec(std::string name) {
     _lock.lock();
     auto search = counters_map.find(name);
     if(search != counters_map.end()) {
-        search->second++;
+        search->second--;
     } else {
         counters_map[name] = -1LL;
     }
