@@ -58,24 +58,7 @@ class Qitsimple
         $priority_high = $priority >> 8;
         $priority_low = $priority % 256;
         $str = 'p' . chr(strlen($name)) . $name . chr($priority_high) . chr($priority_low) . $str . END_OF_STREAM;
-        $res = @socket_write($this->socket, $str, strlen($str));
-        $out = "";
-        $result = "";
-        $endtime = microtime(true)+$this->timeout/1000;
-        while ($endtime > microtime(true)) {
-            $bytes = @socket_recv($this->socket, $out, MAX_DATA_SIZE, MSG_DONTWAIT);
-            /*if ($bytes === false) {
-                $err = socket_strerror(socket_last_error($this->socket));
-                return false;
-            }*/
-            if (!empty($out)) {
-                $result .= $out;
-            }
-            if (substr($out, -1) === END_OF_STREAM) {
-                break;
-            }
-        }
-        $result = str_replace(END_OF_STREAM, "", $result);
+        $result = $this->execute($str);
         if ($result === "ok\n") {
             return true;
         } else {
@@ -94,20 +77,7 @@ class Qitsimple
             $name = substr($name, 0, 255);
         }
         $str = 'e' . chr(strlen($name)) . $name . END_OF_STREAM;
-        $res = @socket_write($this->socket, $str, strlen($str));
-        $out = "";
-        $result = "";
-        $endtime = microtime(true)+$this->timeout/1000;
-        while ($endtime > microtime(true)) {
-            $bytes = @socket_recv($this->socket, $out, MAX_DATA_SIZE, MSG_DONTWAIT);
-            if (!empty($out)) {
-                $result .= $out;
-            }
-            if (substr($out, -1) === END_OF_STREAM) {
-                break;
-            }
-        }
-        $result = str_replace(END_OF_STREAM, "", $result);
+        $result = $this->execute($str);
         if ($result === "ok\n") {
             return true;
         } else {
@@ -132,23 +102,7 @@ class Qitsimple
         $time_high = $time >> 8;
         $time_low = $time % 256;
         $str = 't' . chr(strlen($name)) . $name . chr($time_high) . chr($time_low) . $str . END_OF_STREAM;
-        $res = @socket_write($this->socket, $str, strlen($str));
-        $out = "";
-        $result = "";
-        $endtime = microtime(true)+$this->timeout/1000;
-        while ($endtime > microtime(true)) {
-            $bytes = @socket_recv($this->socket, $out, MAX_DATA_SIZE, MSG_DONTWAIT);
-            /*if ($bytes === false) {
-                $err = socket_strerror(socket_last_error($this->socket));
-            } */
-            if (!empty($out)) {
-                $result .= $out;
-            }
-            if (substr($out, -1) === END_OF_STREAM) {
-                break;
-            }
-        }
-        $result = str_replace(END_OF_STREAM, "", $result);
+        $result = $this->execute($str);
         if ($result === "ok\n") {
             return true;
         } else {
@@ -166,22 +120,70 @@ class Qitsimple
         if (strlen($name) > 255) {
             $name = substr($name, 0, 255);
         }
-        $result = "";
-        $out = "";
-        $str = 'g' . chr(strlen($name)) . $name . END_OF_STREAM;
-        @socket_write($this->socket, $str, strlen($str));
-        $endtime = microtime(true)+$this->timeout/1000;
-        while ($endtime > microtime(true)) {
-            $bytes = @socket_recv($this->socket, $out, MAX_DATA_SIZE, MSG_DONTWAIT);
 
-            if (!empty($out)) {
-                $result .= $out;
-            }
-            if (substr($out, -1) === END_OF_STREAM) {
-                break;
-            }
+        $str = 'g' . chr(strlen($name)) . $name . END_OF_STREAM;
+        $result = $this->execute($str);
+        return $result;
+    }
+    /**
+     * Get counter value
+     * @param $name Counter name
+     * @return integer Value
+     */
+    public function getCounter($name)
+    {
+        if (strlen($name) > 255) {
+            $name = substr($name, 0, 255);
         }
-        return str_replace(END_OF_STREAM, "", $result);
+
+        $str = 'G' . chr(strlen($name)) . $name . END_OF_STREAM;
+        $result = $this->execute($str);
+        return $result;
+    }
+    /**
+     * Increment counter value
+     * @param $name Counter name
+     * @return integer Value
+     */
+    public function incCounter($name)
+    {
+        if (strlen($name) > 255) {
+            $name = substr($name, 0, 255);
+        }
+
+        $str = 'I' . chr(strlen($name)) . $name . END_OF_STREAM;
+        $result = $this->execute($str);
+        return $result;
+    }
+    /**
+     * Decrement counter value
+     * @param $name Counter name
+     * @return integer Value
+     */
+    public function decCounter($name)
+    {
+        if (strlen($name) > 255) {
+            $name = substr($name, 0, 255);
+        }
+
+        $str = 'D' . chr(strlen($name)) . $name . END_OF_STREAM;
+        $result = $this->execute($str);
+        return $result;
+    }
+   /**
+     * Clear (reset) counter
+     * @param $name Counter name
+     * @return integer Value
+     */
+    public function clearCounter($name)
+    {
+        if (strlen($name) > 255) {
+            $name = substr($name, 0, 255);
+        }
+
+        $str = 'E' . chr(strlen($name)) . $name . END_OF_STREAM;
+        $result = $this->execute($str);
+        return $result;
     }
 
     /**
@@ -189,21 +191,24 @@ class Qitsimple
      */
     public function getQuequeList()
     {
-        $result = "";
-        $out = "";
         $str = 'q  ' . END_OF_STREAM;
-        @socket_write($this->socket, $str, strlen($str));
-        $endtime = microtime(true)+$this->timeout/1000;
-        while ($endtime > microtime(true)) {
-            $bytes = @socket_recv($this->socket, $out, MAX_DATA_SIZE, MSG_DONTWAIT);
-            if (!empty($out)) {
-                $result .= $out;
-            }
-            if (substr($out, -1) === END_OF_STREAM) {
-                break;
-            }
+        $result = $this->execute($str);
+        $result = trim($result);
+        if (empty($result)) {
+            return array();
         }
-        $result = trim(str_replace(END_OF_STREAM, "", $result));
+        return explode("\n", $result);
+
+    }
+    /**
+     * @return array Counters list
+     */
+    public function getCountersList()
+    {
+        $str = 'Q  ' . END_OF_STREAM;
+        $result = $this->execute($str);
+        $result = trim($result);
+
         if (empty($result)) {
             return array();
         }
@@ -218,21 +223,9 @@ class Qitsimple
      */
     public function length($name)
     {
-        $result = "";
-        $out = "";
+
         $str = 'l' . chr(strlen($name)) . $name . END_OF_STREAM;
-        @socket_write($this->socket, $str, strlen($str));
-        $endtime = microtime(true)+$this->timeout/1000;
-        while ($endtime > microtime(true)) {
-            $bytes = @socket_recv($this->socket, $out, MAX_DATA_SIZE, MSG_DONTWAIT);
-            if (!empty($out)) {
-                $result .= $out;
-            }
-            if (substr($out, -1) === END_OF_STREAM) {
-                break;
-            }
-        }
-        return str_replace(END_OF_STREAM, "", $result);
+        return $this->execute($str);
     }
 
     /**
@@ -243,5 +236,31 @@ class Qitsimple
         socket_close($this->socket);
         $this->socket = null;
     }
+
+    /**
+     * @param $str
+     * @return string
+     */
+    protected function execute($str)
+    {
+        @socket_write($this->socket, $str, strlen($str));
+        $endtime = microtime(true) + $this->timeout / 1000;
+        $result = "";
+        $out = "";
+        while ($endtime > microtime(true)) {
+            $bytes = @socket_recv($this->socket, $out, MAX_DATA_SIZE, MSG_DONTWAIT);
+
+            if (!empty($out)) {
+                $result .= $out;
+            }
+            if (substr($out, -1) === END_OF_STREAM) {
+                break;
+            }
+        }
+        return str_replace(END_OF_STREAM, "", $result);
+    }
+
+
+
 
 }

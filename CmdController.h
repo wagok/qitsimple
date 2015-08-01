@@ -17,6 +17,12 @@
 #define CMD_CLEAR 'e'
 #define CMD_CLEAR_ALL 'a'
 
+#define CMD_COUNTERS_GET 'G'
+#define CMD_COUNTERS_INC 'I'
+#define CMD_COUNTERS_DEC 'D'
+#define CMD_COUNTERS_CLEAR 'E'
+#define CMD_COUNTERS_LIST 'Q'
+
 
 #define CMD_SUCCESS 0
 #define CMD_ERROR 10

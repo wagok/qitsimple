@@ -146,6 +146,7 @@ void WorkProc::signalHandler(int sig, siginfo_t *si, void *ptr) {
 
 int WorkProc::_initWorkThread() {
     _queue = new NamedQueue();
+    _counters = new CountersMap();
 
     int server_fd = SocketThreadManager::getInstance().startListenServerSocket();
     if (server_fd == -1) {
@@ -157,6 +158,9 @@ int WorkProc::_initWorkThread() {
 void WorkProc::_destroyWorkThread() {
     if (_queue != nullptr) {
         delete _queue;
+    }
+    if (_counters != nullptr) {
+        delete _counters;
     }
     SocketThreadManager::getInstance().CloseServerSocket();
 }

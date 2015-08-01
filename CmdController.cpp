@@ -55,6 +55,28 @@ int CmdController::Execute() {
                 _result = std::string("ok\n");
                 break;
 
+            case CMD_COUNTERS_GET:
+                _result = std::to_string(WorkProc::getInstance().getCounters()->get(_getQueueName()));
+                break;
+
+            case CMD_COUNTERS_INC:
+                WorkProc::getInstance().getCounters()->inc(_getQueueName());
+                _result = std::string("ok\n");
+                break;
+
+            case CMD_COUNTERS_DEC:
+                WorkProc::getInstance().getCounters()->dec(_getQueueName());
+                _result = std::string("ok\n");
+                break;
+
+            case CMD_COUNTERS_CLEAR:
+                WorkProc::getInstance().getCounters()->clear(_getQueueName());
+                _result = std::string("ok\n");
+                break;
+            case CMD_COUNTERS_LIST:
+                _result = WorkProc::getInstance().getCounters()->getList();
+                break;
+
             default: {
                 _result = std::string("Unknown command\n");
                 return_code = CMD_ERROR;
