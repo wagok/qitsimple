@@ -1,7 +1,8 @@
 # Qitsimple (Queue It Simple)
-Qitsimple named message queue. 
+Qitsimple is a queue server and counters server.
 It runs as a daemon (service). Client applications can connect to qitsimple and push messages (tasks, jobs) to the queue and receive messages from the queue.
 Connection is via the tcp socket so client applications can reside on the same or on another server to which there is network access.
+Also you can use named counters. Create, increment, decrement, get and clear value of named counter.
 Qitsimple it will be useful for the implementation of such micro-services architecture.
 It implements prioritize messages when the messages with a higher priority "float upwards" in the queue.
 Qitsimple implements posponed mesages when you can set the time period in seconds after which the only message will appear at the output queue.
@@ -60,6 +61,32 @@ foreach ($list as $queue) {
     echo "Queue:" . $queue . " " . $obj->length($queue) . "\n";
     $obj->clean($queue);
 }
+$obj->disconnect();
+```
+Counters:
+```php
+require_once 'MicroQueue.php';
+
+$obj = new MicroQueue();
+$obj->connect("localhost", 5555);
+
+// create and  increment some counters
+$obj->inc("counter_1");
+$obj->dec("counter_2");
+
+// you can operate with this counters from different processes and even machines
+$obj->inc("counter_1");
+
+
+$list = $obj->getCountersList();
+foreach ($list as $queue) {
+    echo "Counter:" . $queue . " \t\t" . $obj->getCounter($queue) . "\n";
+}
+
+//Reset or clear counter
+$obj->clearCounter("counter_2");
+
+
 $obj->disconnect();
 ```
 
